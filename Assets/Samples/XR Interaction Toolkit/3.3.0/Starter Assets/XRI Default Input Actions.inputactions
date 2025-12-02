@@ -76,6 +76,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Velocity",
+                    "type": "Value",
+                    "id": "ce2b4ae1-f6fc-4fde-b53e-e703e3b09c3e",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Angular",
+                    "type": "Value",
+                    "id": "f1330197-80bd-451c-a626-70e80e231cbe",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -320,6 +338,28 @@
                     "action": "Eye Gaze Is Tracked",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "3e972771-8e37-4b4a-a694-414806af8078",
+                    "path": "<XRInputV1::Oculus::OculusTouchControllerOpenXR>/devicepose/velocity",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Velocity",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a8bc847d-a3df-421b-a8d2-fd993706a534",
+                    "path": "<OculusTouchController>/devicePose/angularVelocity",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Angular",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -449,6 +489,24 @@
                     "type": "Value",
                     "id": "c01850c4-700b-4ae6-a187-a894afef5bbd",
                     "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Angular",
+                    "type": "Value",
+                    "id": "fc272570-9886-457b-80c0-0ded5b93aff4",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Linear",
+                    "type": "Value",
+                    "id": "89aaa401-67de-4704-9006-b61fde24bfc7",
+                    "expectedControlType": "Vector3",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -861,6 +919,28 @@
                     "action": "Thumbstick",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1abc1b97-42c8-42f8-a6ef-4c49faf49889",
+                    "path": "<OculusTouchController>{LeftHand}/devicePose/angularVelocity",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Angular",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7c608bcd-8590-4c70-8198-73357e37b48c",
+                    "path": "<XRInputV1::Oculus::OculusTouchControllerOpenXR>{LeftHand}/devicepose/velocity",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Linear",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -890,7 +970,7 @@
                     "name": "Activate",
                     "type": "Button",
                     "id": "0c0991c5-d329-4afc-8892-1076b440477c",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -1545,6 +1625,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Linear",
+                    "type": "Value",
+                    "id": "fe2099fa-af00-403e-a810-c2e28b366d8a",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Angular",
+                    "type": "Value",
+                    "id": "7d59f1ea-50af-435b-83f9-ee6435e54728",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -1952,6 +2050,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Thumbstick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4a0c2d7c-21ce-4fd9-8e6d-8ef20a4fd999",
+                    "path": "<OculusTouchController>{RightHand}/devicePose/velocity",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Linear",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1ddb62a5-0811-45bb-a34e-57f118ee586f",
+                    "path": "<OculusTouchController>{RightHand}/devicePose/angularVelocity",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Angular",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -3395,6 +3515,94 @@
                     "action": "Spawn Object",
                     "isComposite": false,
                     "isPartOfComposite": true
+                }
+            ]
+        },
+        {
+            "name": "My Button",
+            "id": "32f28221-392a-4b7c-bc53-dd7eac8b8755",
+            "actions": [
+                {
+                    "name": "Active A",
+                    "type": "Button",
+                    "id": "0790caa1-9a7f-4ce6-92ef-37349b32dd83",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Active B",
+                    "type": "Button",
+                    "id": "5c26a06e-815a-4d64-9347-7911bc0e454d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Active Right Grip",
+                    "type": "Button",
+                    "id": "ec0a060a-de7c-43b1-ba6f-836f3060cfc2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Active Left Grip",
+                    "type": "Button",
+                    "id": "124b8329-b99c-4540-a6e6-1abdc80c9a61",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a1e0d3db-0148-4198-a13a-c0379ed5cde5",
+                    "path": "<XRController>{RightHand}/{PrimaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Active A",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ab72658c-ef8b-4209-8c16-4c7087d2a172",
+                    "path": "<XRController>{RightHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Active B",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d85d00d0-352d-47dc-8a83-77eb140cdd0d",
+                    "path": "<XRController>{RightHand}/{GripButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Active Right Grip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "200e71ca-db1a-45e6-a612-d232508c9922",
+                    "path": "<XRController>{LeftHand}/{GripButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Active Left Grip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
