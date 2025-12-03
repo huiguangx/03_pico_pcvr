@@ -1,24 +1,42 @@
+using System.Net.Mime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIController : MonoBehaviour {
 
     // Start is called before the first frame update
     public Text uiText; //待修改的文本
-    public void OnAddButtonClick()
+    public TextMeshProUGUI uiTextPro;
+   public void OnAddButtonClick()
+
     {
-        Debug.Log("✅ 点击成功");
-        // string text = uiText.text;  //获取文本的值
-        // int num=Int32.Parse(text);  //将文本转化为整数
-        // uiText.text = num + 1 + ""; //让整数+1 ，然后在+""
+        Debug.Log("✅ 加按钮被点击");
+        string text = uiTextPro.text;
+        if (int.TryParse(text, out int num))
+        {
+            uiTextPro.text = (num + 1).ToString();
+        }
+        else
+        {
+            uiTextPro.text = "0"; // 默认值
+        }
     }
-    public void ONDecreateButtonClick()
+    public void OnDecreaseButtonClick() // 修正拼写
+
     {
-        string text=uiText.text;
-        int num=Int32.Parse(text);
-        uiText.text = num - 1 + "";
+        Debug.Log("✅ 减按钮被点击");
+        string text = uiTextPro.text;
+        if (int.TryParse(text, out int num))
+        {
+            uiTextPro.text = (num - 1).ToString();
+        }
+        else
+        {
+            uiTextPro.text = "0";
+        }
     }
 }
