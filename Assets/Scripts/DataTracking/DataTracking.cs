@@ -383,6 +383,9 @@ namespace DataTracking
             {
                 url = "https://" + uiController.serverBaseUrl + "/poseData";
             }
+            
+            Debug.Log("目标URL: " + url);
+            
             // 检查URL是否有效
             if (string.IsNullOrEmpty(url))
             {
@@ -399,8 +402,6 @@ namespace DataTracking
             // 忽略SSL证书错误（仅用于开发环境）
             request.certificateHandler = new CustomCertificateHandler();
             request.disposeCertificateHandlerOnDispose = true;
-
-            // Debug.Log("正在发送请求到: " + url);
 
             yield return request.SendWebRequest();
 
@@ -431,7 +432,7 @@ namespace DataTracking
                 _headPosition = deviceHeadPositionRef.action.ReadValue<Vector3>();
             if (IsActionEnabled(deviceHeadRotationRef))
                 _headRotation = deviceHeadRotationRef.action.ReadValue<Quaternion>();
-
+            
             // 直接在Update中发送数据
             // if (Time.time - lastSendTime >= sendInterval)
             // {
