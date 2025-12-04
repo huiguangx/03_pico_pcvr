@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class UIController : MonoBehaviour {
+public class UIControl : MonoBehaviour {
 
     // Start is called before the first frame update
     public Text uiText; //待修改的文本
