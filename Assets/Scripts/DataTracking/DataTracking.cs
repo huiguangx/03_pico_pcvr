@@ -52,9 +52,13 @@ namespace DataTracking
         private ButtonState[] _rightButtons;
 
         [Header("Network Settings")]
-        public string serverUrl = "https://localhost:5000/poseData";
+        [Tooltip("服务器完整 URL (从 UIController 自动获取)")]
+        [SerializeField]
+        private string serverUrl = "https://localhost:5000/poseData"; // 仅显示，实际从 UIController 获取
         private float lastSendTime = 0f;
         public float sendInterval = 0.1f; // 发送间隔（秒）
+
+        private UIController uiController;
 
         private void Awake()
             {
@@ -91,6 +95,13 @@ namespace DataTracking
                 EnableAction(rightAButtonRef);
                 EnableAction(rightBButtonRef);
                 EnableAction(rightGripRef); // 👈
+
+                // 获取 UIController 引用
+                uiController = UnityEngine.Object.FindObjectOfType<UIController>();
+                if (uiController == null)
+                {
+                    Debug.LogWarning("⚠️ 未找到 UIController，将使用默认 serverUrl");
+                }
             }
 
         private void OnEnable()
@@ -131,9 +142,22 @@ namespace DataTracking
             if (rightBButtonRef != null)
             {
                 var action = rightBButtonRef.action;
-                action.performed += _ => {
+                action.performed += ctx => {
                     _rightButtons[5].pressed = true;
                     _rightButtons[5].value = 1f;
+
+                    Debug.Log("🎮 B键按下！");
+
+                    // 简单直接的震动
+                    PXR_Input.SendHapticImpulse(
+                        PXR_Input.VibrateType.RightController,
+                        0.8f,   // 强度
+                        300,    // 时长 ms
+                        200     // 频率 Hz
+                    );
+
+                    // PCVR 兼容震动
+                    TriggerHapticForPCVR(ctx);
                 };
                 action.canceled += _ => {
                     _rightButtons[5].pressed = false;
@@ -217,6 +241,36 @@ namespace DataTracking
         {
             if (actionRef != null)
                 actionRef.action.performed += ctx => callback(ctx.ReadValue<Quaternion>());
+        }
+
+        /// <summary>
+        /// PCVR 模式震动支持
+        /// </summary>
+        private void TriggerHapticForPCVR(InputAction.CallbackContext ctx)
+        {
+            try
+            {
+                // 使用 Unity XR 标准 API（PCVR 兼容）
+                var xrDevices = new System.Collections.Generic.List<UnityEngine.XR.InputDevice>();
+                UnityEngine.XR.InputDevices.GetDevicesWithCharacteristics(
+                    UnityEngine.XR.InputDeviceCharacteristics.Controller |
+                    UnityEngine.XR.InputDeviceCharacteristics.Right,
+                    xrDevices
+                );
+
+                foreach (var device in xrDevices)
+                {
+                    if (device.TryGetHapticCapabilities(out var capabilities) && capabilities.supportsImpulse)
+                    {
+                        device.SendHapticImpulse(0, 0.8f, 0.3f);
+                        Debug.Log($"✅ PCVR 震动发送到: {device.name}");
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"⚠️ PCVR 震动失败: {e.Message}");
+            }
         }
 
         // --- Getters (fallback to cached values if action disabled) ---
@@ -315,43 +369,50 @@ namespace DataTracking
             data.timestamp = System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             string json = JsonUtility.ToJson(data, true);
-            Debug.Log(json);
+       
             // 发送到服务器
             StartCoroutine(PostDataToServer(json));
         }
 
         private IEnumerator PostDataToServer(string jsonData)
         {
+            
+            // 从 UIController 获取基础地址并拼接完整 URL
+            string url = serverUrl; // 默认值
+            if (uiController != null)
+            {
+                url = "https://" + uiController.serverBaseUrl + "/poseData";
+            }
             // 检查URL是否有效
-            if (string.IsNullOrEmpty(serverUrl))
+            if (string.IsNullOrEmpty(url))
             {
                 Debug.LogError("服务器URL为空");
                 yield break;
             }
 
-            var request = new UnityEngine.Networking.UnityWebRequest(serverUrl, "POST");
+            var request = new UnityEngine.Networking.UnityWebRequest(url, "POST");
             byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
             request.uploadHandler = new UnityEngine.Networking.UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new UnityEngine.Networking.DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
-            
+
             // 忽略SSL证书错误（仅用于开发环境）
             request.certificateHandler = new CustomCertificateHandler();
             request.disposeCertificateHandlerOnDispose = true;
 
-            // Debug.Log("正在发送请求到: " + serverUrl);
-            
+            // Debug.Log("正在发送请求到: " + url);
+
             yield return request.SendWebRequest();
 
             if (request.result != UnityEngine.Networking.UnityWebRequest.Result.Success)
             {
-                Debug.LogError("发送VR数据失败. 错误信息: " + request.error + 
-                              "\n响应代码: " + request.responseCode + 
-                              "\nURL: " + serverUrl);
+                Debug.LogError("发送VR数据失败. 错误信息1: " + request.error +
+                              "\n响应代码: " + request.responseCode +
+                              "\nURL: " + url);
             }
             else
             {
-                Debug.Log("成功发送VR数据到服务器. 响应代码: " + serverUrl + request.responseCode + jsonData);
+                Debug.Log("成功发送VR数据到服务器. 响应代码: " + '-' + url + '-' + request.responseCode);
             }
 
             request.Dispose();
@@ -359,12 +420,18 @@ namespace DataTracking
 
         void Update()
         {
+            // 更新 Inspector 显示的 URL（从 UIController 同步）
+            if (uiController != null)
+            {
+                serverUrl = "https://" + uiController.serverBaseUrl + "/poseData";
+            }
+
             // 可选：每帧更新缓存（确保最新值）
             if (IsActionEnabled(deviceHeadPositionRef))
                 _headPosition = deviceHeadPositionRef.action.ReadValue<Vector3>();
             if (IsActionEnabled(deviceHeadRotationRef))
                 _headRotation = deviceHeadRotationRef.action.ReadValue<Quaternion>();
-                
+
             // 直接在Update中发送数据
             // if (Time.time - lastSendTime >= sendInterval)
             // {
