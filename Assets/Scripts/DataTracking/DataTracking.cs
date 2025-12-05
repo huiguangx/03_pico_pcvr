@@ -146,7 +146,7 @@ namespace DataTracking
                     _rightButtons[5].pressed = true;
                     _rightButtons[5].value = 1f;
 
-                    Debug.Log("🎮 B键按下！");
+                    // Debug.Log("🎮 B键按下！");
 
                     // 简单直接的震动
                     // PXR_Input.SendHapticImpulse(
@@ -157,7 +157,7 @@ namespace DataTracking
                     // );
 
                     // PCVR 兼容震动
-                    TriggerHapticForPCVR(ctx);
+                    // TriggerHapticForPCVR(ctx);
                 };
                 action.canceled += _ => {
                     _rightButtons[5].pressed = false;
@@ -413,7 +413,7 @@ namespace DataTracking
             }
             else
             {
-                Debug.Log("成功发送VR数据到服务器. 响应代码: " + '-' + url + '-' + request.responseCode);
+                Debug.Log("成功发送VR数据到服务器. 响应代码: " + jsonData + + '-' + url + '-' + request.responseCode);
             }
 
             request.Dispose();
