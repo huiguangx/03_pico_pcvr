@@ -40,7 +40,7 @@ public class UIController : MonoBehaviour
 
     [Header("服务器配置")]
     [Tooltip("服务器基础地址 (如 192.168.1.100:5000 或 localhost:5000)")]
-    public string serverBaseUrl = "localhost:5000";
+    public string serverBaseUrl = "10.11.107.122:5000";
 
     // 内部引用
     private Canvas canvas;
@@ -411,7 +411,7 @@ public class UIController : MonoBehaviour
 
         RectTransform containerRect = inputContainer.AddComponent<RectTransform>();
 
-containerRect.sizeDelta = new Vector2(500f, 120f);
+        containerRect.sizeDelta = new Vector2(500f, 120f);
 
         // 添加 LayoutElement 控制在垂直布局中的尺寸
         LayoutElement layoutElement = inputContainer.AddComponent<LayoutElement>();
@@ -431,7 +431,7 @@ containerRect.sizeDelta = new Vector2(500f, 120f);
         inputRect.offsetMax = new Vector2(-10, -10);
 
         serverUrlInputField = inputFieldObj.AddComponent<InputField>();
-        serverUrlInputField.text = "localhost:5000";
+        serverUrlInputField.text = "10.11.107.122:5000";
 
         Image inputBg = inputFieldObj.AddComponent<Image>();
         inputBg.color = new Color(0.3f, 0.3f, 0.3f, 1f); // 浅灰色背景

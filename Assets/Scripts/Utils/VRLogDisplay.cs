@@ -9,7 +9,7 @@ using System.Collections.Generic;
 public class VRLogDisplay : MonoBehaviour
 {
     [Header("配置")]
-    [SerializeField] private int maxLines = 10;
+    [SerializeField] private int maxLines = 100;
 
     private Text logText;
     private Queue<string> logs = new Queue<string>();
@@ -36,7 +36,7 @@ public class VRLogDisplay : MonoBehaviour
 
         Canvas canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
-        canvasObj.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 500);
+        canvasObj.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 1500);
 
         // 创建背景
         GameObject bgObj = new GameObject("Background");

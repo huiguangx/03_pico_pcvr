@@ -65,9 +65,9 @@ namespace DataTracking
         [Header("Network Settings")]
         [Tooltip("服务器完整 URL (从 UIController 自动获取)")]
         [SerializeField]
-        private string serverUrl = "https://localhost:5000/poseData"; // 仅显示，实际从 UIController 获取
+        private string serverUrl = "https://10.11.107.122:5000/poseData"; // 仅显示，实际从 UIController 获取
         // private string serverUrl = "https://10.11.107.122:5000/poseData";
-        private float lastSendTime = 0f;
+        // private float lastSendTime = 0f;
         public float sendInterval = 0.1f; // 发送间隔（秒）
 
         private UIController uiController;
@@ -124,209 +124,12 @@ namespace DataTracking
 
         private void OnEnable()
         {
-            // Head
-            SubscribeVector3(deviceHeadPositionRef, v => _headPosition = v);
-            SubscribeQuaternion(deviceHeadRotationRef, q => _headRotation = q);
-            SubscribeVector3(deviceHeadVelocityRef, v => _headVelocity = v);
-            SubscribeVector3(deviceHeadAngularVelocityRef, v => _headAngularVelocity = v);
-
-            // Left
-            SubscribeVector3(leftPositionRef, v => _leftPosition = v);
-            SubscribeQuaternion(leftRotationRef, q => _leftRotation = q);
-            SubscribeVector3(leftVelocityRef, v => _leftVelocity = v);
-            SubscribeVector3(leftAngularVelocityRef, v => _leftAngularVelocity = v);
-            SubscribeVector2(left2DAxisRef, v => {
-                _left2DAxis = v;
-                Debug.Log($"左手2D摇杆轴数据更新: x={v.x:F3}, y={v.y:F3}");
-            }); // 订阅左手2D摇杆轴
-
-            // Right
-            SubscribeVector3(rightPositionRef, v => _rightPosition = v);
-            SubscribeQuaternion(rightRotationRef, q => _rightRotation = q);
-            SubscribeVector3(rightVelocityRef, v => _rightVelocity = v);
-            SubscribeVector3(rightAngularVelocityRef, v => _rightAngularVelocity = v);
-            SubscribeVector2(right2DAxisRef, v => {
-                _right2DAxis = v;
-                Debug.Log($"右手2D摇杆轴数据更新: x={v.x:F3}, y={v.y:F3}");
-            }); // 订阅右手2D摇杆轴
-
-            // Left X Button → index 4
-            if (leftXButtonRef != null)
-            {
-                var action = leftXButtonRef.action;
-                action.performed += _ => {
-                    _leftButtons[4].pressed = true;
-                    _leftButtons[4].value = 1f;
-                    Debug.Log("左手X键按下");
-                };
-                action.canceled += _ => {
-                    _leftButtons[4].pressed = false;
-                    _leftButtons[4].value = 0f;
-                    Debug.Log("左手X键释放");
-                };
-            }
-
-            // Left Y Button → index 5
-            if (leftYButtonRef != null)
-            {
-                var action = leftYButtonRef.action;
-                action.performed += _ => {
-                    _leftButtons[5].pressed = true;
-                    _leftButtons[5].value = 1f;
-                    Debug.Log("左手Y键按下");
-                };
-                action.canceled += _ => {
-                    _leftButtons[5].pressed = false;
-                    _leftButtons[5].value = 0f;
-                    Debug.Log("左手Y键释放");
-                };
-            }
-
-            // Left Trigger → index 0
-            if (leftTriggerRef != null)
-            {
-                var action = leftTriggerRef.action;
-                action.performed += _ => {
-                    _leftButtons[0].pressed = true;
-                    _leftButtons[0].value = 1f;
-                    Debug.Log("左手Trigger键按下");
-                };
-                action.canceled += _ => {
-                    _leftButtons[0].pressed = false;
-                    _leftButtons[0].value = 0f;
-                    Debug.Log("左手Trigger键释放");
-                };
-            }
-
-            // Right A Button → index 4
-            if (rightAButtonRef != null)
-            {
-                var action = rightAButtonRef.action;
-                action.performed += _ => {
-                    _rightButtons[4].pressed = true;
-                    _rightButtons[4].value = 1f;
-                    Debug.Log("右手A键按下");
-                };
-                action.canceled += _ => {
-                    _rightButtons[4].pressed = false;
-                    _rightButtons[4].value = 0f;
-                    Debug.Log("右手A键释放");
-                };
-            }
-
-            // Right B Button → index 5
-            if (rightBButtonRef != null)
-            {
-                var action = rightBButtonRef.action;
-                action.performed += ctx => {
-                    _rightButtons[5].pressed = true;
-                    _rightButtons[5].value = 1f;
-                    Debug.Log("右手B键按下");
-
-                    // Debug.Log("🎮 B键按下！");
-
-                    // 简单直接的震动
-                    // PXR_Input.SendHapticImpulse(
-                    //     PXR_Input.VibrateType.RightController,
-                    //     0.8f,   // 强度
-                    //     300,    // 时长 ms
-                    //     200     // 频率 Hz
-                    // );
-
-                    // PCVR 兼容震动
-                    // TriggerHapticForPCVR(ctx);
-                };
-                action.canceled += _ => {
-                    _rightButtons[5].pressed = false;
-                    _rightButtons[5].value = 0f;
-                    Debug.Log("右手B键释放");
-                };
-            }
-            
-            // Right Trigger → index 0
-            if (rightTriggerRef != null)
-            {
-                var action = rightTriggerRef.action;
-                action.performed += _ => {
-                    _rightButtons[0].pressed = true;
-                    _rightButtons[0].value = 1f;
-                    Debug.Log("右手Trigger键按下");
-                };
-                action.canceled += _ => {
-                    _rightButtons[0].pressed = false;
-                    _rightButtons[0].value = 0f;
-                    Debug.Log("右手Trigger键释放");
-                };
-            }
-
-            // Left Grip → index 1
-            if (leftGripRef != null)
-            {
-                var action = leftGripRef.action;
-                action.performed += _ => {
-                    _leftButtons[1].pressed = true;
-                    _leftButtons[1].value = 1f;
-                    Debug.Log("左手Grip键按下");
-                };
-                action.canceled += _ => {
-                    _leftButtons[1].pressed = false;
-                    _leftButtons[1].value = 0f;
-                    Debug.Log("左手Grip键释放");
-                };
-            }
-
-            // Right Grip → index 1
-            if (rightGripRef != null)
-            {
-                var action = rightGripRef.action;
-                action.performed += _ => {
-                    _rightButtons[1].pressed = true;
-                    _rightButtons[1].value = 1f;
-                    Debug.Log("右手Grip键按下");
-                };
-                action.canceled += _ => {
-                    _rightButtons[1].pressed = false;
-                    _rightButtons[1].value = 0f;
-                    Debug.Log("右手Grip键释放");
-                };
-            }
+            // 不再需要订阅事件，所有数据都在Update中直接读取
         }
 
         private void OnDisable()
         {
-            // Head
-            DisableAction(deviceHeadPositionRef);
-            DisableAction(deviceHeadRotationRef);
-            DisableAction(deviceHeadVelocityRef);
-            DisableAction(deviceHeadAngularVelocityRef);
-
-            // Left
-            DisableAction(leftPositionRef);
-            DisableAction(leftRotationRef);
-            DisableAction(leftVelocityRef);
-            DisableAction(leftAngularVelocityRef);
-            DisableAction(left2DAxisRef);  // 禁用左手2D摇杆轴
-
-            // Right
-            DisableAction(rightPositionRef);
-            DisableAction(rightRotationRef);
-            DisableAction(rightVelocityRef);
-            DisableAction(rightAngularVelocityRef);
-            DisableAction(right2DAxisRef); // 禁用右手2D摇杆轴
-
-            // 新增的左手柄按钮
-            DisableAction(leftXButtonRef);
-            DisableAction(leftYButtonRef);
-            DisableAction(leftTriggerRef);
-
-            // 原有的右手柄按钮
-            DisableAction(rightAButtonRef);
-            DisableAction(rightBButtonRef);
-            DisableAction(rightTriggerRef);
-
-            // 左右手柄抓握键
-            DisableAction(leftGripRef);
-            DisableAction(rightGripRef);
+            // 不再需要取消订阅事件
         }
 
         // --- Helper Methods ---
@@ -388,42 +191,42 @@ namespace DataTracking
             }
         }
 
-        // --- Getters (fallback to cached values if action disabled) ---
-        public Vector3 GetHeadPosition() =>
-            IsActionEnabled(deviceHeadPositionRef) ? deviceHeadPositionRef.action.ReadValue<Vector3>() : _headPosition;
+        // --- Getters (直接读取实时数据) ---
+        public Vector3 GetHeadPosition() => 
+            IsActionEnabled(deviceHeadPositionRef) ? deviceHeadPositionRef.action.ReadValue<Vector3>() : Vector3.zero;
 
-        public Quaternion GetHeadRotation() =>
-            IsActionEnabled(deviceHeadRotationRef) ? deviceHeadRotationRef.action.ReadValue<Quaternion>() : _headRotation;
+        public Quaternion GetHeadRotation() => 
+            IsActionEnabled(deviceHeadRotationRef) ? deviceHeadRotationRef.action.ReadValue<Quaternion>() : Quaternion.identity;
 
-        public Vector3 GetHeadVelocity() =>
-            IsActionEnabled(deviceHeadVelocityRef) ? deviceHeadVelocityRef.action.ReadValue<Vector3>() : _headVelocity;
+        public Vector3 GetHeadVelocity() => 
+            IsActionEnabled(deviceHeadVelocityRef) ? deviceHeadVelocityRef.action.ReadValue<Vector3>() : Vector3.zero;
 
-        public Vector3 GetHeadAngularVelocity() =>
-            IsActionEnabled(deviceHeadAngularVelocityRef) ? deviceHeadAngularVelocityRef.action.ReadValue<Vector3>() : _headAngularVelocity;
+        public Vector3 GetHeadAngularVelocity() => 
+            IsActionEnabled(deviceHeadAngularVelocityRef) ? deviceHeadAngularVelocityRef.action.ReadValue<Vector3>() : Vector3.zero;
 
-        public Vector3 GetLeftPosition() =>
-            IsActionEnabled(leftPositionRef) ? leftPositionRef.action.ReadValue<Vector3>() : _leftPosition;
+        public Vector3 GetLeftPosition() => 
+            IsActionEnabled(leftPositionRef) ? leftPositionRef.action.ReadValue<Vector3>() : Vector3.zero;
 
-        public Quaternion GetLetfRotation() =>
-            IsActionEnabled(leftRotationRef) ? leftRotationRef.action.ReadValue<Quaternion>() : _leftRotation;
+        public Quaternion GetLetfRotation() => 
+            IsActionEnabled(leftRotationRef) ? leftRotationRef.action.ReadValue<Quaternion>() : Quaternion.identity;
 
-        public Vector3 GetLeftVelocity() =>
-            IsActionEnabled(leftVelocityRef) ? leftVelocityRef.action.ReadValue<Vector3>() : _leftVelocity;
+        public Vector3 GetLeftVelocity() => 
+            IsActionEnabled(leftVelocityRef) ? leftVelocityRef.action.ReadValue<Vector3>() : Vector3.zero;
 
-        public Vector3 GetLeftAngularVelocity() =>
-            IsActionEnabled(leftAngularVelocityRef) ? leftAngularVelocityRef.action.ReadValue<Vector3>() : _leftAngularVelocity;
+        public Vector3 GetLeftAngularVelocity() => 
+            IsActionEnabled(leftAngularVelocityRef) ? leftAngularVelocityRef.action.ReadValue<Vector3>() : Vector3.zero;
 
-        public Vector3 GetRightPosition() =>
-            IsActionEnabled(rightPositionRef) ? rightPositionRef.action.ReadValue<Vector3>() : _rightPosition;
+        public Vector3 GetRightPosition() => 
+            IsActionEnabled(rightPositionRef) ? rightPositionRef.action.ReadValue<Vector3>() : Vector3.zero;
 
-        public Quaternion GetRightRotation() =>
-            IsActionEnabled(rightRotationRef) ? rightRotationRef.action.ReadValue<Quaternion>() : _rightRotation;
+        public Quaternion GetRightRotation() => 
+            IsActionEnabled(rightRotationRef) ? rightRotationRef.action.ReadValue<Quaternion>() : Quaternion.identity;
 
-        public Vector3 GetRightVelocity() =>
-            IsActionEnabled(rightVelocityRef) ? rightVelocityRef.action.ReadValue<Vector3>() : _rightVelocity;
+        public Vector3 GetRightVelocity() => 
+            IsActionEnabled(rightVelocityRef) ? rightVelocityRef.action.ReadValue<Vector3>() : Vector3.zero;
 
-        public Vector3 GetRightAngularVelocity() =>
-            IsActionEnabled(rightAngularVelocityRef) ? rightAngularVelocityRef.action.ReadValue<Vector3>() : _rightAngularVelocity;
+        public Vector3 GetRightAngularVelocity() => 
+            IsActionEnabled(rightAngularVelocityRef) ? rightAngularVelocityRef.action.ReadValue<Vector3>() : Vector3.zero;
 
         private bool IsActionEnabled(InputActionReference actionRef) =>
             actionRef?.action?.enabled == true;
@@ -491,7 +294,9 @@ namespace DataTracking
             data.timestamp = System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             string json = JsonUtility.ToJson(data, true);
-       
+            // string leftJson = JsonUtility.ToJson(data.left, true);
+            // string rightJson = JsonUtility.ToJson(data.right, true);
+            // Debug.Log("VR数据: "+ leftJson + rightJson);
             // 发送到服务器
             StartCoroutine(PostDataToServer(json));
         }
@@ -503,7 +308,8 @@ namespace DataTracking
             string url = serverUrl; // 默认值
             if (uiController != null)
             {
-                url = "https://" + uiController.serverBaseUrl + "/poseData";
+                // url = "https://" + uiController.serverBaseUrl + "/poseData";
+                url = "https://10.11.107.122:5000/poseData"; // 测试固定地址
             }
             
             // Debug.Log("目标URL: " + url);
@@ -527,6 +333,7 @@ namespace DataTracking
 
             yield return request.SendWebRequest();
 
+
             if (request.result != UnityEngine.Networking.UnityWebRequest.Result.Success)
             {
                 Debug.LogError("发送VR数据失败. 错误信息1: " + request.error +
@@ -535,7 +342,7 @@ namespace DataTracking
             }
             else
             {
-                // Debug.Log("成功发送VR数据到服务器. 响应代码: " + jsonData + + '-' + url + '-' + request.responseCode);
+                Debug.Log("成功发送VR数据到服务器. 响应代码: " + url + '-' + request.responseCode + jsonData);
             }
 
             request.Dispose();
@@ -549,24 +356,151 @@ namespace DataTracking
                 serverUrl = "https://" + uiController.serverBaseUrl + "/poseData";
             }
 
-            // 可选：每帧更新缓存（确保最新值）
+            // 每帧直接读取所有输入数据
             if (IsActionEnabled(deviceHeadPositionRef))
                 _headPosition = deviceHeadPositionRef.action.ReadValue<Vector3>();
             if (IsActionEnabled(deviceHeadRotationRef))
                 _headRotation = deviceHeadRotationRef.action.ReadValue<Quaternion>();
+            if (IsActionEnabled(deviceHeadVelocityRef))
+                _headVelocity = deviceHeadVelocityRef.action.ReadValue<Vector3>();
+            if (IsActionEnabled(deviceHeadAngularVelocityRef))
+                _headAngularVelocity = deviceHeadAngularVelocityRef.action.ReadValue<Vector3>();
+                
+            if (IsActionEnabled(leftPositionRef))
+                _leftPosition = leftPositionRef.action.ReadValue<Vector3>();
+            if (IsActionEnabled(leftRotationRef))
+                _leftRotation = leftRotationRef.action.ReadValue<Quaternion>();
+            if (IsActionEnabled(leftVelocityRef))
+                _leftVelocity = leftVelocityRef.action.ReadValue<Vector3>();
+            if (IsActionEnabled(leftAngularVelocityRef))
+                _leftAngularVelocity = leftAngularVelocityRef.action.ReadValue<Vector3>();
+                
+            if (IsActionEnabled(rightPositionRef))
+                _rightPosition = rightPositionRef.action.ReadValue<Vector3>();
+            if (IsActionEnabled(rightRotationRef))
+                _rightRotation = rightRotationRef.action.ReadValue<Quaternion>();
+            if (IsActionEnabled(rightVelocityRef))
+                _rightVelocity = rightVelocityRef.action.ReadValue<Vector3>();
+            if (IsActionEnabled(rightAngularVelocityRef))
+                _rightAngularVelocity = rightAngularVelocityRef.action.ReadValue<Vector3>();
             
             // 更新摇杆轴数据
-            if (IsActionEnabled(left2DAxisRef))
-                _left2DAxis = left2DAxisRef.action.ReadValue<Vector2>();
-            if (IsActionEnabled(right2DAxisRef))
-                _right2DAxis = right2DAxisRef.action.ReadValue<Vector2>();
+            if (IsActionEnabled(left2DAxisRef)) {
+                Vector2 newLeftAxis = left2DAxisRef.action.ReadValue<Vector2>();
+                // 只有当值发生变化时才输出日志
+                if (newLeftAxis != _left2DAxis) {
+                    _left2DAxis = newLeftAxis;
+                    Debug.Log($"左手2D摇杆轴数据更新: x={_left2DAxis.x:F3}, y={_left2DAxis.y:F3}");
+                }
+            }
+                
+            if (IsActionEnabled(right2DAxisRef)) {
+                Vector2 newRightAxis = right2DAxisRef.action.ReadValue<Vector2>();
+                // 只有当值发生变化时才输出日志
+                if (newRightAxis != _right2DAxis) {
+                    _right2DAxis = newRightAxis;
+                    Debug.Log($"右手2D摇杆轴数据更新: x={_right2DAxis.x:F3}, y={_right2DAxis.y:F3}");
+                }
+            }
             
-            // 直接在Update中发送数据
-            // if (Time.time - lastSendTime >= sendInterval)
-            // {
-                SendVRDataToServer();
-                lastSendTime = Time.time;
-            // }
+            // 检查并输出按钮状态变化的日志
+            CheckAndLogButtonChanges();
+            
+            // 每帧发送数据到服务器
+            SendVRDataToServer();
+        }
+
+        private void CheckAndLogButtonChanges()
+        {
+            // 检查左手柄按钮状态变化
+            if (IsActionEnabled(leftXButtonRef))
+            {
+                bool currentlyPressed = leftXButtonRef.action.ReadValue<float>() > 0.5f;
+                if (currentlyPressed != _leftButtons[4].pressed)
+                {
+                    _leftButtons[4].pressed = currentlyPressed;
+                    _leftButtons[4].value = currentlyPressed ? 1f : 0f;
+                    Debug.Log($"左手X键{(currentlyPressed ? "按下" : "释放")}");
+                }
+            }
+
+            if (IsActionEnabled(leftYButtonRef))
+            {
+                bool currentlyPressed = leftYButtonRef.action.ReadValue<float>() > 0.5f;
+                if (currentlyPressed != _leftButtons[5].pressed)
+                {
+                    _leftButtons[5].pressed = currentlyPressed;
+                    _leftButtons[5].value = currentlyPressed ? 1f : 0f;
+                    Debug.Log($"左手Y键{(currentlyPressed ? "按下" : "释放")}");
+                }
+            }
+
+            if (IsActionEnabled(leftTriggerRef))
+            {
+                bool currentlyPressed = leftTriggerRef.action.ReadValue<float>() > 0.5f;
+                if (currentlyPressed != _leftButtons[0].pressed)
+                {
+                    _leftButtons[0].pressed = currentlyPressed;
+                    _leftButtons[0].value = currentlyPressed ? 1f : 0f;
+                    Debug.Log($"左手Trigger键{(currentlyPressed ? "按下" : "释放")}");
+                }
+            }
+
+            if (IsActionEnabled(leftGripRef))
+            {
+                bool currentlyPressed = leftGripRef.action.ReadValue<float>() > 0.5f;
+                if (currentlyPressed != _leftButtons[1].pressed)
+                {
+                    _leftButtons[1].pressed = currentlyPressed;
+                    _leftButtons[1].value = currentlyPressed ? 1f : 0f;
+                    Debug.Log($"左手Grip键{(currentlyPressed ? "按下" : "释放")}");
+                }
+            }
+
+            // 检查右手柄按钮状态变化
+            if (IsActionEnabled(rightAButtonRef))
+            {
+                bool currentlyPressed = rightAButtonRef.action.ReadValue<float>() > 0.5f;
+                if (currentlyPressed != _rightButtons[4].pressed)
+                {
+                    _rightButtons[4].pressed = currentlyPressed;
+                    _rightButtons[4].value = currentlyPressed ? 1f : 0f;
+                    Debug.Log($"右手A键{(currentlyPressed ? "按下" : "释放")}");
+                }
+            }
+
+            if (IsActionEnabled(rightBButtonRef))
+            {
+                bool currentlyPressed = rightBButtonRef.action.ReadValue<float>() > 0.5f;
+                if (currentlyPressed != _rightButtons[5].pressed)
+                {
+                    _rightButtons[5].pressed = currentlyPressed;
+                    _rightButtons[5].value = currentlyPressed ? 1f : 0f;
+                    Debug.Log($"右手B键{(currentlyPressed ? "按下" : "释放")}");
+                }
+            }
+
+            if (IsActionEnabled(rightTriggerRef))
+            {
+                bool currentlyPressed = rightTriggerRef.action.ReadValue<float>() > 0.5f;
+                if (currentlyPressed != _rightButtons[0].pressed)
+                {
+                    _rightButtons[0].pressed = currentlyPressed;
+                    _rightButtons[0].value = currentlyPressed ? 1f : 0f;
+                    Debug.Log($"右手Trigger键{(currentlyPressed ? "按下" : "释放")}");
+                }
+            }
+
+            if (IsActionEnabled(rightGripRef))
+            {
+                bool currentlyPressed = rightGripRef.action.ReadValue<float>() > 0.5f;
+                if (currentlyPressed != _rightButtons[1].pressed)
+                {
+                    _rightButtons[1].pressed = currentlyPressed;
+                    _rightButtons[1].value = currentlyPressed ? 1f : 0f;
+                    Debug.Log($"右手Grip键{(currentlyPressed ? "按下" : "释放")}");
+                }
+            }
         }
 
         [ContextMenu("Test Generate JSON")]
