@@ -3523,7 +3523,7 @@
             "id": "32f28221-392a-4b7c-bc53-dd7eac8b8755",
             "actions": [
                 {
-                    "name": "Active A",
+                    "name": "Active Right A",
                     "type": "Button",
                     "id": "0790caa1-9a7f-4ce6-92ef-37349b32dd83",
                     "expectedControlType": "",
@@ -3532,7 +3532,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Active B",
+                    "name": "Active Right B",
                     "type": "Button",
                     "id": "5c26a06e-815a-4d64-9347-7911bc0e454d",
                     "expectedControlType": "",
@@ -3550,9 +3550,45 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Active Right Trigger",
+                    "type": "Button",
+                    "id": "b347e142-3de4-4c92-b4d8-8e2c88cfb925",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Active Left Grip",
                     "type": "Button",
                     "id": "124b8329-b99c-4540-a6e6-1abdc80c9a61",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Active Left Y",
+                    "type": "Button",
+                    "id": "3b9ef8dd-680c-47d7-96f0-cf40db12164e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Active Left X",
+                    "type": "Button",
+                    "id": "130dfabf-4cbc-451d-a816-18ad5ffd107f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Active Left Trigger",
+                    "type": "Button",
+                    "id": "e5a3a461-4ae9-40ed-b84e-4816ca0abf70",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -3567,7 +3603,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Active A",
+                    "action": "Active Right A",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -3578,7 +3614,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Active B",
+                    "action": "Active Right B",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -3601,6 +3637,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "Active Left Grip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "42df0a0c-9717-4182-bdce-14b92431f593",
+                    "path": "<XRController>{RightHand}/{TriggerButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Active Right Trigger",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9062903c-7a7b-47ab-8a27-337b36f3a17c",
+                    "path": "<XRController>{LeftHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Active Left Y",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2ad31dc5-1b86-4a4b-be30-e17ed5f2aab3",
+                    "path": "<XRController>{LeftHand}/{PrimaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Active Left X",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "164baa09-90f0-41be-9a40-559acaf147a7",
+                    "path": "<XRController>{LeftHand}/{TriggerButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Active Left Trigger",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
