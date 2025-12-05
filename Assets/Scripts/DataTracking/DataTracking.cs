@@ -19,6 +19,9 @@ namespace DataTracking
         public InputActionReference leftVelocityRef;
         public InputActionReference leftAngularVelocityRef;
         public InputActionReference leftGripRef;
+        public InputActionReference leftXButtonRef;  // 左手X按键
+        public InputActionReference leftYButtonRef;  // 左手Y按键
+        public InputActionReference leftTriggerRef;  // 左手Trigger按键
 
         [Header("Right Hand")]
         public InputActionReference rightPositionRef;
@@ -28,6 +31,7 @@ namespace DataTracking
         public InputActionReference rightAButtonRef;
         public InputActionReference rightBButtonRef;
         public InputActionReference rightGripRef;
+        public InputActionReference rightTriggerRef; // 右手Trigger按键
 
         // Head
         private Vector3 _headPosition = Vector3.zero;
@@ -85,7 +89,10 @@ namespace DataTracking
                 EnableAction(leftRotationRef);
                 EnableAction(leftVelocityRef);
                 EnableAction(leftAngularVelocityRef);
-                EnableAction(leftGripRef); // 👈
+                EnableAction(leftGripRef);
+                EnableAction(leftXButtonRef);  // 启用左手X按键
+                EnableAction(leftYButtonRef);  // 启用左手Y按键
+                EnableAction(leftTriggerRef);  // 启用左手Trigger按键
 
                 // Right
                 EnableAction(rightPositionRef);
@@ -94,7 +101,8 @@ namespace DataTracking
                 EnableAction(rightAngularVelocityRef);
                 EnableAction(rightAButtonRef);
                 EnableAction(rightBButtonRef);
-                EnableAction(rightGripRef); // 👈
+                EnableAction(rightGripRef);
+                EnableAction(rightTriggerRef); // 启用右手Trigger按键
 
                 // 获取 UIController 引用
                 uiController = UnityEngine.Object.FindObjectOfType<UIController>();
@@ -124,6 +132,54 @@ namespace DataTracking
             SubscribeVector3(rightVelocityRef, v => _rightVelocity = v);
             SubscribeVector3(rightAngularVelocityRef, v => _rightAngularVelocity = v);
 
+            // Left X Button → index 4
+            if (leftXButtonRef != null)
+            {
+                var action = leftXButtonRef.action;
+                action.performed += _ => {
+                    _leftButtons[4].pressed = true;
+                    _leftButtons[4].value = 1f;
+                    Debug.Log("左手X键按下");
+                };
+                action.canceled += _ => {
+                    _leftButtons[4].pressed = false;
+                    _leftButtons[4].value = 0f;
+                    Debug.Log("左手X键释放");
+                };
+            }
+
+            // Left Y Button → index 5
+            if (leftYButtonRef != null)
+            {
+                var action = leftYButtonRef.action;
+                action.performed += _ => {
+                    _leftButtons[5].pressed = true;
+                    _leftButtons[5].value = 1f;
+                    Debug.Log("左手Y键按下");
+                };
+                action.canceled += _ => {
+                    _leftButtons[5].pressed = false;
+                    _leftButtons[5].value = 0f;
+                    Debug.Log("左手Y键释放");
+                };
+            }
+
+            // Left Trigger → index 0
+            if (leftTriggerRef != null)
+            {
+                var action = leftTriggerRef.action;
+                action.performed += _ => {
+                    _leftButtons[0].pressed = true;
+                    _leftButtons[0].value = 1f;
+                    Debug.Log("左手Trigger键按下");
+                };
+                action.canceled += _ => {
+                    _leftButtons[0].pressed = false;
+                    _leftButtons[0].value = 0f;
+                    Debug.Log("左手Trigger键释放");
+                };
+            }
+
             // Right A Button → index 4
             if (rightAButtonRef != null)
             {
@@ -131,10 +187,12 @@ namespace DataTracking
                 action.performed += _ => {
                     _rightButtons[4].pressed = true;
                     _rightButtons[4].value = 1f;
+                    Debug.Log("右手A键按下");
                 };
                 action.canceled += _ => {
                     _rightButtons[4].pressed = false;
                     _rightButtons[4].value = 0f;
+                    Debug.Log("右手A键释放");
                 };
             }
 
@@ -145,6 +203,7 @@ namespace DataTracking
                 action.performed += ctx => {
                     _rightButtons[5].pressed = true;
                     _rightButtons[5].value = 1f;
+                    Debug.Log("右手B键按下");
 
                     // Debug.Log("🎮 B键按下！");
 
@@ -162,33 +221,55 @@ namespace DataTracking
                 action.canceled += _ => {
                     _rightButtons[5].pressed = false;
                     _rightButtons[5].value = 0f;
+                    Debug.Log("右手B键释放");
                 };
             }
-            // Left Grip → index 2
+            
+            // Right Trigger → index 0
+            if (rightTriggerRef != null)
+            {
+                var action = rightTriggerRef.action;
+                action.performed += _ => {
+                    _rightButtons[0].pressed = true;
+                    _rightButtons[0].value = 1f;
+                    Debug.Log("右手Trigger键按下");
+                };
+                action.canceled += _ => {
+                    _rightButtons[0].pressed = false;
+                    _rightButtons[0].value = 0f;
+                    Debug.Log("右手Trigger键释放");
+                };
+            }
+
+            // Left Grip → index 1
             if (leftGripRef != null)
             {
                 var action = leftGripRef.action;
                 action.performed += _ => {
                     _leftButtons[1].pressed = true;
                     _leftButtons[1].value = 1f;
+                    Debug.Log("左手Grip键按下");
                 };
                 action.canceled += _ => {
                     _leftButtons[1].pressed = false;
                     _leftButtons[1].value = 0f;
+                    Debug.Log("左手Grip键释放");
                 };
             }
 
-            // Right Grip → index 2
+            // Right Grip → index 1
             if (rightGripRef != null)
             {
                 var action = rightGripRef.action;
                 action.performed += _ => {
                     _rightButtons[1].pressed = true;
                     _rightButtons[1].value = 1f;
+                    Debug.Log("右手Grip键按下");
                 };
                 action.canceled += _ => {
                     _rightButtons[1].pressed = false;
                     _rightButtons[1].value = 0f;
+                    Debug.Log("右手Grip键释放");
                 };
             }
         }
@@ -213,9 +294,17 @@ namespace DataTracking
             DisableAction(rightVelocityRef);
             DisableAction(rightAngularVelocityRef);
 
+            // 新增的左手柄按钮
+            DisableAction(leftXButtonRef);
+            DisableAction(leftYButtonRef);
+            DisableAction(leftTriggerRef);
+
+            // 原有的右手柄按钮
             DisableAction(rightAButtonRef);
             DisableAction(rightBButtonRef);
+            DisableAction(rightTriggerRef);
 
+            // 左右手柄抓握键
             DisableAction(leftGripRef);
             DisableAction(rightGripRef);
         }
