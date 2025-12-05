@@ -62,8 +62,8 @@ namespace DataTracking
 
         private void Awake()
             {
-                PXR_Manager.EnableVideoSeeThrough = true;
-                Debug.Log("✅ 11111" + JsonUtility.ToJson(PXR_Manager.EnableVideoSeeThrough));
+                // 视频透视
+                // PXR_Manager.EnableVideoSeeThrough = true;
                 
                 // 初始化按钮数组
                 _leftButtons = new ButtonState[7];
@@ -100,7 +100,7 @@ namespace DataTracking
                 uiController = UnityEngine.Object.FindObjectOfType<UIController>();
                 if (uiController == null)
                 {
-                    Debug.LogWarning("⚠️ 未找到 UIController，将使用默认 serverUrl");
+                    // Debug.LogWarning("⚠️ 未找到 UIController，将使用默认 serverUrl");
                 }
             }
 
@@ -149,12 +149,12 @@ namespace DataTracking
                     Debug.Log("🎮 B键按下！");
 
                     // 简单直接的震动
-                    PXR_Input.SendHapticImpulse(
-                        PXR_Input.VibrateType.RightController,
-                        0.8f,   // 强度
-                        300,    // 时长 ms
-                        200     // 频率 Hz
-                    );
+                    // PXR_Input.SendHapticImpulse(
+                    //     PXR_Input.VibrateType.RightController,
+                    //     0.8f,   // 强度
+                    //     300,    // 时长 ms
+                    //     200     // 频率 Hz
+                    // );
 
                     // PCVR 兼容震动
                     TriggerHapticForPCVR(ctx);
