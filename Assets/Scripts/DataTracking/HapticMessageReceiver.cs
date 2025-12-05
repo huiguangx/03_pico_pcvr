@@ -13,7 +13,7 @@ namespace DataTracking
         [Header("服务器配置")]
         [Tooltip("消息接口完整 URL (从 UIController 自动获取)")]
         [SerializeField]
-        private string messageApiUrl = "https://10.11.107.122:5000/msg"; // 仅显示，实际从 UIController 获取
+        private string messageApiUrl = "https://127.0.0.1:5000/msg"; // 仅显示，实际从 UIController 获取
 
         [Tooltip("轮询间隔（秒）")]
         [Range(0.05f, 5f)]
@@ -46,7 +46,7 @@ namespace DataTracking
             if (uiController != null)
             {
                 // messageApiUrl = "https://" + uiController.serverBaseUrl + "/msg";
-                messageApiUrl = "https://10.11.107.122:5000/msg"; // 测试固定地址
+                messageApiUrl = "https://localhost:5000/msg"; // 测试固定地址
             }
 
             if (!enableMessageReceiving) return;

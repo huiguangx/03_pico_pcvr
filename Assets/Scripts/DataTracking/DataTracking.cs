@@ -65,8 +65,7 @@ namespace DataTracking
         [Header("Network Settings")]
         [Tooltip("服务器完整 URL (从 UIController 自动获取)")]
         [SerializeField]
-        private string serverUrl = "https://10.11.107.122:5000/poseData"; // 仅显示，实际从 UIController 获取
-        // private string serverUrl = "https://10.11.107.122:5000/poseData";
+        private string serverUrl = "https://127.0.0.1:5000/poseData"; // 仅显示，实际从 UIController 获取
         // private float lastSendTime = 0f;
         public float sendInterval = 0.1f; // 发送间隔（秒）
 
@@ -296,7 +295,10 @@ namespace DataTracking
             string json = JsonUtility.ToJson(data, true);
             // string leftJson = JsonUtility.ToJson(data.left, true);
             // string rightJson = JsonUtility.ToJson(data.right, true);
-            // Debug.Log("VR数据: "+ leftJson + rightJson);
+            string rightbutton = JsonUtility.ToJson(data.right, true);
+
+            Debug.Log("VR数据0------: "+  rightbutton);
+            
             // 发送到服务器
             StartCoroutine(PostDataToServer(json));
         }
@@ -309,7 +311,7 @@ namespace DataTracking
             if (uiController != null)
             {
                 // url = "https://" + uiController.serverBaseUrl + "/poseData";
-                url = "https://10.11.107.122:5000/poseData"; // 测试固定地址
+                url = "https://localhost:5000/poseData"; // 测试固定地址
             }
             
             // Debug.Log("目标URL: " + url);
@@ -342,7 +344,7 @@ namespace DataTracking
             }
             else
             {
-                Debug.Log("成功发送VR数据到服务器. 响应代码: " + url + '-' + request.responseCode + jsonData);
+                // Debug.Log("成功发送VR数据到服务器. 响应代码: " + url + '-' + request.responseCode + jsonData);
             }
 
             request.Dispose();
