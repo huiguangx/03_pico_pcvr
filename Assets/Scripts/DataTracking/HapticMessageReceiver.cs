@@ -49,7 +49,7 @@ namespace DataTracking
             }
 
             if (!enableMessageReceiving) return;
-            Debug.Log("轮询目标URL: " + messageApiUrl);
+            // Debug.Log("轮询目标URL: " + messageApiUrl);
             // 定期轮询消息
             if (Time.time - lastPollTime >= pollInterval && !isPolling)
             {

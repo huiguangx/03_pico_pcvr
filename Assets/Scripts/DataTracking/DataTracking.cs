@@ -486,6 +486,7 @@ namespace DataTracking
             // 将右手2D摇杆轴数据填充到 axes 数组的后两位 (索引 2, 3)
             data.right.axes[2] = _right2DAxis.x;
             data.right.axes[3] = _right2DAxis.y;
+            // Debug.Log("✅ 摇杆数据" + _left2DAxis.x + "," + _left2DAxis.y + "," + _right2DAxis.x + "," + _right2DAxis.y);
 
             data.timestamp = System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
@@ -505,7 +506,7 @@ namespace DataTracking
                 url = "https://" + uiController.serverBaseUrl + "/poseData";
             }
             
-            Debug.Log("目标URL: " + url);
+            // Debug.Log("目标URL: " + url);
             
             // 检查URL是否有效
             if (string.IsNullOrEmpty(url))
@@ -534,7 +535,7 @@ namespace DataTracking
             }
             else
             {
-                Debug.Log("成功发送VR数据到服务器. 响应代码: " + jsonData + + '-' + url + '-' + request.responseCode);
+                // Debug.Log("成功发送VR数据到服务器. 响应代码: " + jsonData + + '-' + url + '-' + request.responseCode);
             }
 
             request.Dispose();
