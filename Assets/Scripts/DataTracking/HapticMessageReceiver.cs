@@ -85,12 +85,20 @@ namespace DataTracking
                 url = "https://" + uiController.serverBaseUrl + "/msg";
             }
 
-            var request = UnityWebRequest.Get(url);
+            var request = new UnityWebRequest(url, "POST");
+            request.downloadHandler = new DownloadHandlerBuffer();
             request.certificateHandler = new CustomCertificateHandler();
             request.disposeCertificateHandlerOnDispose = true;
             request.timeout = 2; // 2秒超时
 
+            Debug.Log($"🌐 请求URL: {url}");
             yield return request.SendWebRequest();
+
+            // 打印完整的响应信息
+            Debug.Log($"📡 响应码: {request.responseCode}");
+            Debug.Log($"📡 响应结果: {request.result}");
+            Debug.Log($"📡 响应内容: {request.downloadHandler.text}");
+            Debug.Log($"📡 错误信息: {request.error}");
 
             if (request.result == UnityWebRequest.Result.Success)
             {
@@ -126,33 +134,39 @@ namespace DataTracking
 
             try
             {
-                // 解析 JSON
-                var message = JsonUtility.FromJson<MessageWrapper>(json);
+                // 解析 JSON - 先尝试解析为 ServerResponse（包含 msg 数组）
+                var serverResponse = JsonUtility.FromJson<ServerResponse>(json);
 
-                if (message == null)
+                if (serverResponse == null || serverResponse.msg == null || serverResponse.msg.Length == 0)
                 {
                     if (verboseLogging)
-                        Debug.LogWarning("⚠️ 消息解析失败：JSON 格式错误");
+                        Debug.LogWarning("⚠️ 消息解析失败：JSON 格式错误或 msg 数组为空");
                     return;
                 }
 
-                // 检查是否是震动指令
-                if (message.id == "vibrate")
+                // 遍历处理每个消息
+                foreach (var message in serverResponse.msg)
                 {
-                    if (message.data != null)
+                    if (message == null) continue;
+
+                    // 检查是否是震动指令
+                    if (message.id == "vibrate")
                     {
-                        TriggerVibration(message.data);
+                        if (message.data != null)
+                        {
+                            TriggerVibration(message.data);
+                        }
+                        else
+                        {
+                            Debug.LogWarning("⚠️ 震动指令缺少 data 字段");
+                        }
                     }
                     else
                     {
-                        Debug.LogWarning("⚠️ 震动指令缺少 data 字段");
+                        // 其他类型的消息可以在这里处理
+                        if (verboseLogging)
+                            Debug.Log($"📬 收到其他消息: {message.id}");
                     }
-                }
-                else
-                {
-                    // 其他类型的消息可以在这里处理
-                    if (verboseLogging)
-                        Debug.Log($"📬 收到其他消息: {message.id}");
                 }
             }
             catch (System.Exception e)
@@ -319,6 +333,15 @@ namespace DataTracking
     }
 
     // ===== 数据结构 =====
+
+    /// <summary>
+    /// 服务器响应结构（包含 msg 数组）
+    /// </summary>
+    [System.Serializable]
+    public class ServerResponse
+    {
+        public MessageWrapper[] msg;
+    }
 
     /// <summary>
     /// 消息包装结构

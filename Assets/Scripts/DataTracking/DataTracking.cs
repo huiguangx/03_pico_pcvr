@@ -297,7 +297,7 @@ namespace DataTracking
             // string rightJson = JsonUtility.ToJson(data.right, true);
             string rightbutton = JsonUtility.ToJson(data.right, true);
 
-            Debug.Log("VR数据0------: "+  rightbutton);
+            // Debug.Log("VR数据0------1: "+  rightbutton);
             
             // 发送到服务器
             StartCoroutine(PostDataToServer(json));
@@ -338,9 +338,9 @@ namespace DataTracking
 
             if (request.result != UnityEngine.Networking.UnityWebRequest.Result.Success)
             {
-                Debug.LogError("发送VR数据失败. 错误信息1: " + request.error +
-                              "\n响应代码: " + request.responseCode +
-                              "\nURL: " + url);
+                // Debug.LogError("发送VR数据失败. 错误信息1: " + request.error +
+                //               "\n响应代码: " + request.responseCode +
+                //               "\nURL: " + url);
             }
             else
             {
