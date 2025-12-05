@@ -3593,6 +3593,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Active Left Axis",
+                    "type": "Value",
+                    "id": "abc08bd8-b96a-4b3c-bc4f-b873b512ce45",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Active Right Axis",
+                    "type": "Value",
+                    "id": "74a80ba3-7141-4fd4-96c9-10dcbfef61e6",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -3681,6 +3699,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Active Left Trigger",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7e7d0e2c-5149-4294-b9cf-c3efcdc1a460",
+                    "path": "<XRController>{LeftHand}/{Primary2DAxis}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Active Left Axis",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ad6964cc-23b9-4bba-a481-d212c4ddf222",
+                    "path": "<XRController>{RightHand}/{Primary2DAxis}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Active Right Axis",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

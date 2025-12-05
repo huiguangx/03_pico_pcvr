@@ -22,6 +22,7 @@ namespace DataTracking
         public InputActionReference leftXButtonRef;  // 左手X按键
         public InputActionReference leftYButtonRef;  // 左手Y按键
         public InputActionReference leftTriggerRef;  // 左手Trigger按键
+        public InputActionReference left2DAxisRef;   // 左手2D摇杆轴
 
         [Header("Right Hand")]
         public InputActionReference rightPositionRef;
@@ -32,6 +33,7 @@ namespace DataTracking
         public InputActionReference rightBButtonRef;
         public InputActionReference rightGripRef;
         public InputActionReference rightTriggerRef; // 右手Trigger按键
+        public InputActionReference right2DAxisRef;  // 右手2D摇杆轴
 
         // Head
         private Vector3 _headPosition = Vector3.zero;
@@ -55,10 +57,16 @@ namespace DataTracking
         // Right Buttons: 7 个按钮状态（index 4 = A, index 5 = B）
         private ButtonState[] _rightButtons;
 
+        // Left Joystick Axes
+        private Vector2 _left2DAxis = Vector2.zero; // 左手2D摇杆轴数据
+        // Right Joystick Axes
+        private Vector2 _right2DAxis = Vector2.zero; // 右手2D摇杆轴数据
+
         [Header("Network Settings")]
         [Tooltip("服务器完整 URL (从 UIController 自动获取)")]
         [SerializeField]
         private string serverUrl = "https://localhost:5000/poseData"; // 仅显示，实际从 UIController 获取
+        // private string serverUrl = "https://10.11.107.122:5000/poseData";
         private float lastSendTime = 0f;
         public float sendInterval = 0.1f; // 发送间隔（秒）
 
@@ -93,6 +101,7 @@ namespace DataTracking
                 EnableAction(leftXButtonRef);  // 启用左手X按键
                 EnableAction(leftYButtonRef);  // 启用左手Y按键
                 EnableAction(leftTriggerRef);  // 启用左手Trigger按键
+                EnableAction(left2DAxisRef);   // 启用左手2D摇杆轴
 
                 // Right
                 EnableAction(rightPositionRef);
@@ -103,6 +112,7 @@ namespace DataTracking
                 EnableAction(rightBButtonRef);
                 EnableAction(rightGripRef);
                 EnableAction(rightTriggerRef); // 启用右手Trigger按键
+                EnableAction(right2DAxisRef);  // 启用右手2D摇杆轴
 
                 // 获取 UIController 引用
                 uiController = UnityEngine.Object.FindObjectOfType<UIController>();
@@ -125,12 +135,20 @@ namespace DataTracking
             SubscribeQuaternion(leftRotationRef, q => _leftRotation = q);
             SubscribeVector3(leftVelocityRef, v => _leftVelocity = v);
             SubscribeVector3(leftAngularVelocityRef, v => _leftAngularVelocity = v);
+            SubscribeVector2(left2DAxisRef, v => {
+                _left2DAxis = v;
+                Debug.Log($"左手2D摇杆轴数据更新: x={v.x:F3}, y={v.y:F3}");
+            }); // 订阅左手2D摇杆轴
 
             // Right
             SubscribeVector3(rightPositionRef, v => _rightPosition = v);
             SubscribeQuaternion(rightRotationRef, q => _rightRotation = q);
             SubscribeVector3(rightVelocityRef, v => _rightVelocity = v);
             SubscribeVector3(rightAngularVelocityRef, v => _rightAngularVelocity = v);
+            SubscribeVector2(right2DAxisRef, v => {
+                _right2DAxis = v;
+                Debug.Log($"右手2D摇杆轴数据更新: x={v.x:F3}, y={v.y:F3}");
+            }); // 订阅右手2D摇杆轴
 
             // Left X Button → index 4
             if (leftXButtonRef != null)
@@ -287,12 +305,14 @@ namespace DataTracking
             DisableAction(leftRotationRef);
             DisableAction(leftVelocityRef);
             DisableAction(leftAngularVelocityRef);
+            DisableAction(left2DAxisRef);  // 禁用左手2D摇杆轴
 
             // Right
             DisableAction(rightPositionRef);
             DisableAction(rightRotationRef);
             DisableAction(rightVelocityRef);
             DisableAction(rightAngularVelocityRef);
+            DisableAction(right2DAxisRef); // 禁用右手2D摇杆轴
 
             // 新增的左手柄按钮
             DisableAction(leftXButtonRef);
@@ -330,6 +350,12 @@ namespace DataTracking
         {
             if (actionRef != null)
                 actionRef.action.performed += ctx => callback(ctx.ReadValue<Quaternion>());
+        }
+
+        private void SubscribeVector2(InputActionReference actionRef, System.Action<Vector2> callback)
+        {
+            if (actionRef != null)
+                actionRef.action.performed += ctx => callback(ctx.ReadValue<Vector2>());
         }
 
         /// <summary>
@@ -453,7 +479,13 @@ namespace DataTracking
                 };
             }
 
-            // axes 不需要赋值，默认就是 [0,0,0,0]
+            // 将左手2D摇杆轴数据填充到 axes 数组的后两位 (索引 2, 3)
+            data.left.axes[2] = _left2DAxis.x;
+            data.left.axes[3] = _left2DAxis.y;
+
+            // 将右手2D摇杆轴数据填充到 axes 数组的后两位 (索引 2, 3)
+            data.right.axes[2] = _right2DAxis.x;
+            data.right.axes[3] = _right2DAxis.y;
 
             data.timestamp = System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
@@ -522,6 +554,12 @@ namespace DataTracking
             if (IsActionEnabled(deviceHeadRotationRef))
                 _headRotation = deviceHeadRotationRef.action.ReadValue<Quaternion>();
             
+            // 更新摇杆轴数据
+            if (IsActionEnabled(left2DAxisRef))
+                _left2DAxis = left2DAxisRef.action.ReadValue<Vector2>();
+            if (IsActionEnabled(right2DAxisRef))
+                _right2DAxis = right2DAxisRef.action.ReadValue<Vector2>();
+            
             // 直接在Update中发送数据
             // if (Time.time - lastSendTime >= sendInterval)
             // {
@@ -534,8 +572,8 @@ namespace DataTracking
         void TestGenerateJSON()
             {
                 bool anyPressed = 
-                _rightButtons[4].pressed || _rightButtons[5].pressed || _rightButtons[1].pressed ||
-                _leftButtons[1].pressed;
+                _rightButtons[4].pressed || _rightButtons[5].pressed || _rightButtons[1].pressed || _rightButtons[0].pressed ||
+                _leftButtons[1].pressed || _leftButtons[0].pressed || _leftButtons[4].pressed || _leftButtons[5].pressed;
 
                 if (anyPressed)
                 {
@@ -552,14 +590,20 @@ namespace DataTracking
                     data.left.rotation = new QuaternionData(GetLetfRotation());
                     data.left.linearVelocity = new Vector4Data(GetLeftVelocity());       // ✅
                     data.left.angularVelocity = new Vector4Data(GetLeftAngularVelocity()); // ✅
-                    // left.button 保持默认（全 false）
-                    // left.axes 已在构造函数中初始化为 [0,0,0,0]
+                    
+                    // 设置左手摇杆轴数据到axes数组的后两位（索引2和3）
+                    data.left.axes[2] = _left2DAxis.x;
+                    data.left.axes[3] = _left2DAxis.y;
 
                     // Right
                     data.right.position = new Vector3Data(GetRightPosition());
                     data.right.rotation = new QuaternionData(GetRightRotation());
                     data.right.linearVelocity = new Vector4Data(GetRightVelocity());     // ✅
                     data.right.angularVelocity = new Vector4Data(GetRightAngularVelocity()); // ✅
+                    
+                    // 设置右手摇杆轴数据到axes数组的后两位（索引2和3）
+                    data.right.axes[2] = _right2DAxis.x;
+                    data.right.axes[3] = _right2DAxis.y;
 
                     // 深拷贝按钮状态
                     // Left buttons
@@ -588,12 +632,12 @@ namespace DataTracking
                         };
                     }
 
-                    // axes 不需要赋值，默认就是 [0,0,0,0]
+                    // axes 不需要赋值，默认就是 [0,0,0,0]，除了摇杆轴数据已在上面设置
 
                     data.timestamp = System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
                     string json = JsonUtility.ToJson(data, true);
-                    Debug.Log("✅ A/B 按下中 - VR 数据:\n" + json);
+                    Debug.Log("✅ 按钮按下中 - VR 数据:\n" + json);
                 }
             }
     }
